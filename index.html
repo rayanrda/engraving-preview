@@ -1,7 +1,7 @@
 <html>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>NGL Engraving Experience</title>
 </head>
 <body>
@@ -221,10 +221,11 @@
 
     </div>
 <script>
-const options = {
+var options = {
     price:94,
     "size":{
         "selected":"90ml",
+        price:0,
         "saved":null,
         "data":{
             "50ml":{
@@ -234,6 +235,7 @@ const options = {
                     "pyramid1":"50_pyramid1.jpg",
                     "pyramid2":"50_pyramid2.jpg",
                 },
+                "price":-30,
                 "label":"50ml",
                 "position":{x:215,y:165}
             },
@@ -245,7 +247,8 @@ const options = {
                     "pyramid2":"90_pyramid2.jpg",
                 },  
                 "label":"90ml",
-                "position":{x:218,y:135}
+                "position":{x:218,y:135},
+                "price":0,
             },
             "150ml":{
                 "image":{
@@ -255,14 +258,15 @@ const options = {
                     "pyramid2":"150_pyramid2.jpg",
                 },
                  "label":"150ml",
-                "position":{x:221,y:115}
+                "position":{x:221,y:115},
+                "price":+30,
             },
         }
     },
     "engrave":{
         "selected":null,
         "saved":null,
-        "price":5,
+        "price":0,
         "data":{
             "monogram":{label:"Monogram","price":5},
             "message":{label:"Message","price":5},
@@ -319,7 +323,17 @@ $(".engraving-accordion-item-option").on("click",function(){
         options[key].price = options[key].data[options[key].selected].price; 
         $(".engraving-details-price").text(`$${options.price + options[key].price}.00`);
     }
-  
+    
+    let calculated_price = options.price;
+    for (let key in options) {
+        if (options.hasOwnProperty(key)) {
+            if(options[key].price !== undefined){
+                calculated_price += options[key].price;
+            }
+        }
+    }
+    $(".engraving-details-price").text(`$${calculated_price}.00`);
+
 
     if(options.engrave.selected == "message"){ $(".message input").trigger("input");}else{$(".monogram input").trigger("input"); }
 
@@ -339,8 +353,13 @@ $(".engraving-accordion-item-apply").on("click",function(){
   $(`.engraving-accordion-item[data-id="${key}"]`).removeClass("active");
   $(`.engraving-accordion-item-button[data-key="${next_key}"]`).addClass("active");
   $(`.engraving-accordion-item[data-id="${next_key}"]`).addClass("active");
-  $(".engraving-body").scrollTop($(`.engraving-accordion-item[data-id="${next_key}"]`).position().top);
+  //$(".engraving-body").scrollTop($(`.engraving-accordion-item[data-id="${next_key}"]`).position().top);
+ 
+        document.querySelector(".engraving-body").scrollTo(
+            { top: $(`.engraving-accordion-item[data-id="${next_key}"]`).position().top, behavior: 'smooth' }
+        )
   }
+  
   if(options.engrave.selected == "message"){ $(".message input").trigger("input");}else{$(".monogram input").trigger("input"); }
 });
 
