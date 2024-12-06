@@ -355,9 +355,11 @@ $(".engraving-accordion-item-apply").on("click",function(){
   $(`.engraving-accordion-item[data-id="${next_key}"]`).addClass("active");
   //$(".engraving-body").scrollTop($(`.engraving-accordion-item[data-id="${next_key}"]`).position().top);
  
-        document.querySelector(".engraving-body").scrollTo(
-            { top: $(`.engraving-accordion-item[data-id="${next_key}"]`).position().top, behavior: 'smooth' }
-        )
+//     if(key == "engrave"){
+//         document.querySelector(".engraving-body").scrollTo(
+//             { top: $(`.engraving-accordion-item[data-id="${next_key}"]`).position().top, behavior: 'smooth' }
+//         )
+//   }
   }
   
   if(options.engrave.selected == "message"){ $(".message input").trigger("input");}else{$(".monogram input").trigger("input"); }
