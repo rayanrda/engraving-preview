@@ -388,6 +388,7 @@ $(".engraving-restart").on("click",function(){
 });
 
 $(".message input,.monogram input").on("input change",function(){
+    $(this).parent().find(".input-size").text($(this).val().length + "/" + $(this).attr("maxlength"));
 
     let preview_text = $("#preview_text");
     let position = options.size.data[options.size.selected].position;
@@ -442,6 +443,8 @@ $(".message input,.monogram input").on("input change",function(){
     transform-origin: center;
     opacity: 0.7;
     filter: contrast(100%) blur(0.1px);
+    color: #000000ba;
+    text-shadow: 1px 1px #f3f4ee, -1px -1px #372212;
 }
 .engraving-image{
     position: relative;
