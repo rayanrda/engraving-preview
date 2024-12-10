@@ -340,11 +340,40 @@ $(".engraving-accordion-item-option").on("click",function(){
    
 });
 
+$(".engraving-atc").on("click",function(){
+
+let a = options.accessories.data[options.accessories.selected]==undefined?"No accessories":options.accessories.data[options.accessories.selected].label;
+let e = options.engrave.data[options.engrave.selected]==undefined?"":options.engrave.data[options.engrave.selected].label
+let msg = $(".message input").val() != ""?$(".message input").val():$(".monogram input").val()
+let size = options.size.selected
+let price = $(".engraving-details-price").text()
+let e_none = options.engrave.data[options.engrave.selected]==undefined
+    
+alert(`Thank you for completing the prototype.\r\n
+To be sure your choice are aligned with what you wanted to complete, here is a recap of your peronalization:\r
+- Size: ${size}\r
+- Accessories: ${a}\r
+- Engraving: ${e_none?"No engraving":""}\
+${!e_none?`\r\n    - Type: ${e}`:""} \
+${!e_none?`\r\n    - Text: ${msg}`:""} 
+- Total Price: ${price}\r\n\r\n
+If you agree with this summary and feel that you have explored the page sufficiently, please proceed to the next step. Otherwise, feel free to explore further, restart the experience, or make any necessary modifications.`
+);
+
+});
+
 $(".engraving-accordion-item-apply").on("click",function(){
     let key = $(this).attr("data-key");
 
         //OLD POSITION OF CHANGE BLOCK
 
+    if(key == "engrave"){
+        if(!$("#accept").is(":checked") &&  ($(".message input").val() != "" || $(".monogram input").val() != "")){
+            $(".radio-message").css("color","red");
+            return;
+        }
+    }
+    $(".radio-message").css("color","black");
 
   let next = $(`.engraving-accordion-item[data-id="${key}"]`).next(".engraving-accordion-item-button");
   if(next !== undefined){
@@ -519,7 +548,7 @@ input + label::before {
     .engraving-body {
         flex-direction: row !important;
         overflow: hidden;
-        padding-bottom: 60px !important;
+        padding-bottom: 75px !important;
         height: 100% !important;
   }
   .times{
@@ -630,7 +659,7 @@ body{
 }
 
 .engraving-body {
-    overflow: scroll;
+    overflow: auto;
     padding-bottom: 90px;
     height: 100%;
     width: 100%;
@@ -803,7 +832,7 @@ img {
     margin-top: 5px;
 }
 span.big {
-    font-size: 25px;
+font-size:2em
 }
 .engraving-accordion-item-option-label{
     text-align: center;
