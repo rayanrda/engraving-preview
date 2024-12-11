@@ -19,7 +19,7 @@
             <div class="engraving-details">
                 <div class="engraving-close-desktop"><i class="times"></i></div>
                 <div class="engraving-details-title">LIBRE EAU DE PARFUM </div>
-                <div class="engraving-details-description">Choose ipsum dolor sit amet, consectetur adipiscing elit. Nulla auctor augue quis dolor bibendum.</div>
+                <div class="engraving-details-description">A FLORAL FRAGRANCE WITH LAVENDER, ORANGE BLOSSOM, MUSK ACCORD & VANILLA</div>
                 <div class="engraving-details-price">$94.00</div>
                 <div class="engraving-details-info">  <div class="info-icon"><i class="info"></i></div> <div class="info-message">Engraved orders not guaranteed to arrive by Dec 24.</div></div>
             </div>
@@ -38,6 +38,7 @@
                             <div class="engraving-accordion-item-option-label">
                                50ml
                             </div>
+
                         </div>
                         <div class="engraving-accordion-item-option active" data-key="size" data-sub-key="90ml">
                             <div class="engraving-accordion-item-option-image">
@@ -46,6 +47,7 @@
                             <div class="engraving-accordion-item-option-label">
                                90ml
                             </div>
+
                         </div>
                         <div class="engraving-accordion-item-option" data-key="size" data-sub-key="150ml">
                             <div class="engraving-accordion-item-option-image">
@@ -54,6 +56,7 @@
                             <div class="engraving-accordion-item-option-label">
                                 150ml
                             </div>
+  
                         </div>
                     </div>
                     <div class="engraving-accordion-item-actions">
@@ -301,6 +304,8 @@ $(".engraving-accordion-item-option").on("click",function(){
         }
     }
 
+
+
     if(options[key] !== undefined){
     options[key].selected = subkey;
     }
@@ -319,6 +324,7 @@ $(".engraving-accordion-item-option").on("click",function(){
   }
 
   
+
     if(options[key].data[options[key].selected].price !== undefined){
         options[key].price = options[key].data[options[key].selected].price; 
         $(".engraving-details-price").text(`$${options.price + options[key].price}.00`);
