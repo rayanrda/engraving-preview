@@ -314,6 +314,7 @@ var options = {
     "engrave":{
         "selected":null,
         "saved":null,
+        "message":"",
         "price":0,
         "colors":"silver",
         "data":{
@@ -333,6 +334,34 @@ var options = {
     }
 };
 
+
+async function displayPopup(options){
+    return await new Promise(function(resolve, reject) {
+    let main = $("<div>",{class:"popup-main"});
+    let cont = $("<div>",{class:"popup-cont"});
+        let title = $("<div>",{class:"popup-title"}).text(options.title);
+        let close = $("<div>",{class:"popup-close"}).on("click",function(){main.remove();});   
+        close.append('<i class="times"></i>')
+        let desc = $("<div>",{class:"popup-desc"}).html(options.description);
+        let buttons = $("<div>",{class:"popup-buttons"});
+ 
+        for(i = 0; i < options.buttons.length; i++){
+            let v = options.buttons[i];
+            let button = $("<div>",{class:v.class});
+            button.text(v.text);
+            button.on("click",function () {resolve(v.func())});
+            buttons.append(button);
+        };
+
+    main.append(cont);
+    cont.append(title);
+    cont.append(close);
+    cont.append(desc);
+    cont.append(buttons);
+    main.appendTo($("body"));
+});
+
+}
 
 function parsedQuery(){
     let o = {};
@@ -451,25 +480,71 @@ $(".color").on("click",function(){
 });
 
 
-$(".engraving-atc").on("click",function(){
+$(".engraving-atc").on("click",async function(){
+
+    if(!$("#accept").is(":checked") &&  ($(".message input").val() != "" || $(".monogram input").val() != "")){
+            $(".radio-message").css("color","red");
+            return;
+        }
 
 let a = options.accessories.data[options.accessories.selected]==undefined?"No accessories":options.accessories.data[options.accessories.selected].label;
 let e = options.engrave.data[options.engrave.selected]==undefined?"":options.engrave.data[options.engrave.selected].label
 let msg = $(".message input").val() != ""?$(".message input").val():$(".monogram input").val()
 let size = options.size.selected
-let price = $(".engraving-details-price").text()
+
 let e_none = options.engrave.data[options.engrave.selected]==undefined
     
-alert(`Thank you for completing the prototype.\r\n
-To be sure your choice are aligned with what you wanted to complete, here is a recap of your peronalization:\r
-- Size: ${size}\r
-- Accessories: ${a}\r
-- Engraving: ${e_none?"No engraving":""}\
-${!e_none?`\r\n    - Type: ${e}`:""} \
-${!e_none?`\r\n    - Text: ${msg}`:""} 
-- Total Price: ${price}\r\n\r\n
-If you agree with this summary and feel that you have explored the page sufficiently, please proceed to the next step. Otherwise, feel free to explore further, restart the experience, or make any necessary modifications.`
-);
+let engraving_missing = options.engrave.message == "" && (options.engrave.selected == "default" || options.engrave.selected == null);
+let accessories_missing = (options.accessories.selected == "default" || options.accessories.selected == null);
+if(options.engrave.selected != "default" && options.engrave.selected != null && options.engrave.message == "" ){
+    popup = await displayPopup({
+    title:"PROCEED WITHOUT ENGRAVING ?",
+    description:"You have selected an engraving option but you haven't type any text. Are you sur you want to complete you purchase without engraving ?",
+    buttons:[
+        {class:"secondary",text:"BACK",func:()=>{$(".popup-main").remove();return false}},
+        {class:"primary",text:"CONFIRM",func:()=>{$(".popup-main").remove();return true}}
+    ]});
+    if(popup == false){
+        return;
+    }else{
+        $(`[data-key="engrave"][data-sub-key="default"]`).click();
+    }
+}
+
+
+if(engraving_missing && accessories_missing){
+    popup = await displayPopup({
+    title:"PROCEED WITHOUT PERSONALIZATION ?",
+    description:"You haven’t selected any customization options. Are you sure you want to complete your purchase without personalization?",
+    buttons:[
+        {class:"secondary",text:"CANCEL",func:()=>{$(".popup-main").remove();return false}},
+        {class:"primary",text:"CONFIRM",func:()=>{$(".popup-main").remove();return true}}
+    ]});
+    if(popup == false){
+        return;
+    }
+}
+
+let price = $(".engraving-details-price").text()
+popup = await displayPopup({
+    title:"THANK YOU FOR COMPLETING THE PROTOTYPE",
+    description:`To be sure your choice are aligned with what you wanted to complete, here is a recap of your peronalization:<br/>
+    <ul>
+        <li>Size: ${size}</li>
+<li>Accessories: ${a}</li>
+<li>Engraving: ${(options.engrave.selected != "default" && options.engrave.selected != null && options.engrave.message != "")?"":"No engraving"}
+    ${(options.engrave.selected != "default" && options.engrave.selected != null && options.engrave.message != "")?`
+    <ul>
+<li>Type: ${e}</li>
+<li>Text: ${msg}</li>
+</ul>`:''}</li>
+<li>Total Price: ${price}</li></ul><br/>
+If you agree with this summary and feel that you have explored the page sufficiently, please click confirm and proceed to the next step on UserTesting. Otherwise, feel free to go back explore further, restart the experience, or make any necessary modifications.`,
+    buttons:[
+        {class:"secondary",text:"BACK",func:()=>{$(".popup-main").remove();return false}},
+        {class:"primary",text:"CONTINUE",func:()=>{$(".popup-main").remove();return true}}
+    ]});
+    
 
 });
 
@@ -556,6 +631,7 @@ $(".message input,.monogram input").on("input change",function(){
     $(this).parent().find(".input-size").text($(this).val().length + "/" + $(this).attr("maxlength"));
 
     let preview_text = $("#preview_text");
+
    
     let position = options.size.data[options.size.selected].position;
     inside = '';
@@ -567,6 +643,7 @@ $(".message input,.monogram input").on("input change",function(){
         inside = `<span class='small'>${text[0]!==undefined?text[0]:""}</span><span class='big'>${text[1]!==undefined?text[1]:""}</span><span class='small'>${text[2]!==undefined?text[2]:""}</span>`;
     }
 
+    options.engrave.message=text;
     preview_text.html(inside);
    
     if(options.engrave.selected == "message"){
@@ -1008,6 +1085,98 @@ font-size:2em
 #preview_text[data-color="silver"] {
     text-shadow: 1px 1px #ffffff, -1px -1px #000000;
     color: #373737d9;
+}
+
+
+
+.popup-cont {
+    /* position: fixed; */
+    /* top: 0; */
+    /* left: 0; */
+    /* width: 100%; */
+}
+
+.popup-main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #00000052;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-cont {
+    background: #fff;
+    padding: 20px;
+    max-width: 485px;
+    position: relative;
+}
+
+.popup-title {
+    font-size: 1.5em;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.popup-desc {
+    padding: 20px 0px;
+}
+
+.popup-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-buttons .secondary {
+    border: 1px solid #000000;
+    padding: 8px 18px;
+    font-weight: 600;
+}
+
+.popup-buttons .primary {
+    border: 1px solid #000000;
+    padding: 8px 18px;
+    font-weight: 600;
+    background: #000;
+    color: #fff;
+}
+
+.popup-buttons div {
+    cursor: pointer;
+}
+
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 13px;
+}
+
+i.times.small {
+    width: 30px;
+    height: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    .popup-cont {
+    position: absolute;
+    bottom: 0;
+    max-width:100% ;
+    width: 100%;
+}
+
+.popup-buttons {
+    flex-direction: column;
+    gap: 11px;
+}
+
+.popup-buttons div {
+    text-align: center;
+}
 }
 
 
