@@ -12,7 +12,7 @@
             <div class="engraving-close"><i class="times"></i></div>
             <div class="engraving-image">
                 <img id="preview" src="https://www.yslbeautyus.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ysl-master-catalog/default/dw3cedbd53/Images2019/Libre%20Eau%20De%20Parfum/90mL/3614272648425.jpg?sw=720&sh=720&sm=cut&sfrm=jpg&q=85" alt="">
-                <div id="preview_text"></div>
+                <div id="preview_text" data-color="silver"></div>
             </div>
         </div>
         <div class="engraving-options">
@@ -38,7 +38,12 @@
                             <div class="engraving-accordion-item-option-label">
                                50ml
                             </div>
-
+                            <div class="engraving-accordion-item-option-price" data-ref="absolute" data-url-condition="absolute-price">
+                                $64.00
+                            </div>
+                            <div class="engraving-accordion-item-option-price" data-ref="relative" data-url-condition="relative-price">
+                                +$30.00
+                            </div>
                         </div>
                         <div class="engraving-accordion-item-option active" data-key="size" data-sub-key="90ml">
                             <div class="engraving-accordion-item-option-image">
@@ -47,7 +52,12 @@
                             <div class="engraving-accordion-item-option-label">
                                90ml
                             </div>
-
+                            <div class="engraving-accordion-item-option-price" data-ref="absolute" data-url-condition="absolute-price">
+                                $94.00
+                            </div>
+                            <div class="engraving-accordion-item-option-price" data-ref="relative" data-url-condition="relative-price">
+                                
+                            </div>
                         </div>
                         <div class="engraving-accordion-item-option" data-key="size" data-sub-key="150ml">
                             <div class="engraving-accordion-item-option-image">
@@ -56,7 +66,12 @@
                             <div class="engraving-accordion-item-option-label">
                                 150ml
                             </div>
-  
+                            <div class="engraving-accordion-item-option-price" data-ref="absolute" data-url-condition="absolute-price">
+                                $124.00
+                            </div>
+                            <div class="engraving-accordion-item-option-price" data-ref="relative" data-url-condition="relative-price">
+                                +$30.00
+                            </div>
                         </div>
                     </div>
                     <div class="engraving-accordion-item-actions">
@@ -145,6 +160,21 @@
 
 
                 <div class="engraving-accordion-item" data-id="engrave">
+
+                    <div class="engraving-accordion-item-group">
+                    <div class="engraving-accordion-item-option" data-key="engrave" data-sub-key="default">
+                        <div class="engraving-accordion-item-option-image">
+                            <img src="no-engraving.png" alt="" width="50" height="50">
+                        </div>
+                        <div class="engraving-accordion-item-option-label">
+                           None
+                        </div>
+                        <div class="engraving-accordion-item-option-price">
+                            Free
+                        </div>
+                    </div>
+                    </div>
+
                     <div class="engraving-accordion-item-title">TYPE</div>
                     <div class="engraving-accordion-item-group">
                         <div class="engraving-accordion-item-option" data-key="engrave" data-sub-key="monogram">
@@ -172,6 +202,21 @@
                         
                             
                         </div>
+                        <div class="colors">
+                            <div class="engraving-accordion-item-title">COLOR FILL</div>
+                            <div class="colors-inner">
+                                <div class="color active color-silver" data-color="silver" data-color-name="Silver">
+                                    <span></span>
+                                </div>
+                                <div class="color color-gold" data-color="gold" data-color-name="Gold">
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="colors-name">Silver</div>
+                        </div>
+
+                      
+
                         <div class="message">
                             <div class="engraving-accordion-item-title">MESSAGE</div>
                             <div class="engraving-accordion-item-input-container">
@@ -228,7 +273,7 @@ var options = {
     price:94,
     "size":{
         "selected":"90ml",
-        price:0,
+        price_absolute:0,
         "saved":null,
         "data":{
             "50ml":{
@@ -238,7 +283,7 @@ var options = {
                     "pyramid1":"50_pyramid1.jpg",
                     "pyramid2":"50_pyramid2.jpg",
                 },
-                "price":-30,
+                "price_absolute":64,
                 "label":"50ml",
                 "position":{x:215,y:165}
             },
@@ -251,7 +296,7 @@ var options = {
                 },  
                 "label":"90ml",
                 "position":{x:218,y:135},
-                "price":0,
+                "price_absolute":94,
             },
             "150ml":{
                 "image":{
@@ -262,7 +307,7 @@ var options = {
                 },
                  "label":"150ml",
                 "position":{x:221,y:115},
-                "price":+30,
+                "price_absolute":124,
             },
         }
     },
@@ -270,7 +315,9 @@ var options = {
         "selected":null,
         "saved":null,
         "price":0,
+        "colors":"silver",
         "data":{
+            "default":{label:"None","price":0},
             "monogram":{label:"Monogram","price":5},
             "message":{label:"Message","price":5},
         }
@@ -287,8 +334,25 @@ var options = {
 };
 
 
+function parsedQuery(){
+    let o = {};
+    let u = window.location.search.substring(1).split("&");
+    for(i = 0; i < u.length; i++){
+        a = u[i].split("=");
+        if(a[0] !== undefined){o[a[0]] = a[1] !== undefined?a[1]:null}
+    }
+    return o;
+}
+const Query = parsedQuery();
+$("[data-url-condition]").each(function(k,e){
+    let key = $(this).attr("data-url-condition");
+    if(Query[key] == "true"){
+        $(this).css("display","block");
+    }
+});
+
 $(".engraving-accordion-item-option").on("click",function(){
-    $(".engraving-accordion-item-option").parent().find(".engraving-accordion-item-option").removeClass("active");
+    $(this).parents(".engraving-accordion-item").find(".engraving-accordion-item-option").removeClass("active");
     $(this).addClass("active");
     let key = $(this).attr("data-key");
     let subkey = $(this).attr("data-sub-key");
@@ -297,10 +361,16 @@ $(".engraving-accordion-item-option").on("click",function(){
         $(".message input,.monogram input").val("")
         if(subkey == "message"){
             $(".message").show();
+            $(".colors").show();
             $(".monogram").hide();
-        }else{
+        }else if(subkey == "monogram"){
             $(".monogram").show();
+            $(".colors").show();
             $(".message").hide();
+        }else  if(subkey == "default"){
+            $(".monogram").hide();
+            $(".message").hide();
+            $(".colors").hide();
         }
     }
 
@@ -323,14 +393,40 @@ $(".engraving-accordion-item-option").on("click",function(){
         $(`.engraving-accordion-item-button[data-key="${key}"]`).find(".engraving-accordion-item-button-value").text(options[key].data[options[key].selected].label);
   }
 
-  
+  if(options[key].data[options[key].selected].price_absolute !== undefined){
+        options[key].price_absolute = options[key].data[options[key].selected].price_absolute; 
+    }
 
     if(options[key].data[options[key].selected].price !== undefined){
         options[key].price = options[key].data[options[key].selected].price; 
-        $(".engraving-details-price").text(`$${options.price + options[key].price}.00`);
     }
     
+    if(key == "size"){
+        $.each(options.size.data,function(k,v){
+            let rel_price = Math.round(options.size.price_absolute - v.price_absolute);
+            let price_display = "";
+            console.log(rel_price)
+            if(rel_price < 0){
+             price_display = `+$${Math.abs(rel_price)}.00`;
+            }else if(rel_price > 0){
+             price_display = `-$${Math.abs(rel_price)}.00`;
+            }
+            $(`div[data-key='size'][data-sub-key='${k}'] [data-ref='relative']`).text(price_display);
+        });
+        
+    }
+
+    
+
+    for (let key in options) {
+        if (options.hasOwnProperty(key)) {
+            if(options[key].price_absolute !== undefined){
+                options.price = options[key].price_absolute;
+            }
+        }
+    }
     let calculated_price = options.price;
+
     for (let key in options) {
         if (options.hasOwnProperty(key)) {
             if(options[key].price !== undefined){
@@ -345,6 +441,15 @@ $(".engraving-accordion-item-option").on("click",function(){
 
    
 });
+
+$(".color").on("click",function(){
+    $(".color.active").removeClass("active");
+    $(this).addClass("active");
+    options.engrave.colors = $(this).attr("data-color");
+    $("#preview_text").attr("data-color",options.engrave.colors)
+
+});
+
 
 $(".engraving-atc").on("click",function(){
 
@@ -437,6 +542,10 @@ $(".engraving-restart").on("click",function(){
      $(".engraving-accordion-item-option[data-sub-key='90ml']").addClass("active");
      $("#preview").attr("src","90_default.jpg");
      $(".engraving-details-price").text(`$94.00`);
+     $(".color.active").removeClass("active");
+     $(".color")[0].addClass("active");
+     options.engrave.colors = "silver";
+     $(".colors-name").text("Silver");
      $(".engraving-body").scrollTop(0);
      $(".engraving-accordion-item[data-id='size']").addClass("active");
      $(`.engraving-accordion-item-button`).find(".engraving-accordion-item-button-value").text('');
@@ -447,6 +556,7 @@ $(".message input,.monogram input").on("input change",function(){
     $(this).parent().find(".input-size").text($(this).val().length + "/" + $(this).attr("maxlength"));
 
     let preview_text = $("#preview_text");
+   
     let position = options.size.data[options.size.selected].position;
     inside = '';
     text = $(this).val();
@@ -489,8 +599,14 @@ $(".message input,.monogram input").on("input change",function(){
 .message{
     display: none;
 }
+.colors{
+    display: none;
+}
 .monogram{
     display: none;
+}
+.preview-monogram{
+    text-transform: uppercase;
 }
 #preview_text{
     position: absolute;
@@ -546,6 +662,9 @@ input + label::before {
     vertical-align: top;
 }
 
+*[data-url-condition]{
+    display: none;
+}
 @media only screen and (min-width: 600px) {
     body{
         font-size: 12px;
@@ -843,6 +962,55 @@ font-size:2em
 .engraving-accordion-item-option-label{
     text-align: center;
 }
+
+.colors-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.color {
+    height: 40px;
+    width: 40px;
+    border: 1px solid #d3d3d3;
+    border-radius: 50px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+.color span {
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+}
+
+.color-silver span {
+    background-image: linear-gradient(315deg, #C9CCD5, #121212);
+}
+
+.color-gold span {
+    background-image: linear-gradient(315deg, #f3c076, #f9ec7f);
+}
+
+.color.active {
+    border: 1px solid #305686;
+}
+
+#preview_text[data-color="gold"] {
+    color: #c56c01d9;
+    text-shadow: 1px 1px #fffb00, -1px -1px #1b1a16;
+}
+#preview_text[data-color="silver"] {
+    text-shadow: 1px 1px #ffffff, -1px -1px #000000;
+    color: #373737d9;
+}
+
+
 </style>
 </body>
 </html>
