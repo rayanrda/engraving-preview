@@ -5,6 +5,7 @@
     <title>NGL Engraving Experience</title>
 </head>
 <body>
+
     <div class="engraving-container">
         <div class="engraving-body">
        
@@ -318,7 +319,7 @@ var options = {
         "price":0,
         "colors":"silver",
         "data":{
-            "default":{label:"None","price":0},
+            "default":{label:"","price":0},
             "monogram":{label:"Monogram","price":5},
             "message":{label:"Message","price":5},
         }
@@ -419,8 +420,21 @@ $(".engraving-accordion-item-option").on("click",function(){
             image = selected.image[options.accessories.selected];
         }
         $("#preview").attr("src",image);
-        $(`.engraving-accordion-item-button[data-key="${key}"]`).find(".engraving-accordion-item-button-value").text(options[key].data[options[key].selected].label);
+       
   }
+
+let label = "";
+if(key == "engrave"){
+    if( options[key].data[options[key].selected].label !== ""){
+    label = options[key].data[options[key].selected].label +", "+ options.engrave.colors.charAt(0).toUpperCase() +  options.engrave.colors.slice(1) ;
+    }
+}else{
+    label =options[key].data[options[key].selected].label;
+}
+
+  $(`.engraving-accordion-item-button[data-key="${key}"]`).find(".engraving-accordion-item-button-value").text(label);
+
+
 
   if(options[key].data[options[key].selected].price_absolute !== undefined){
         options[key].price_absolute = options[key].data[options[key].selected].price_absolute; 
@@ -485,6 +499,8 @@ $(".engraving-atc").on("click",async function(){
     if(!$("#accept").is(":checked") &&  ($(".message input").val() != "" || $(".monogram input").val() != "")){
             $(".radio-message").css("color","red");
             return;
+        }else{
+            $(".radio-message").css("color","black");
         }
 
 let a = options.accessories.data[options.accessories.selected]==undefined?"No accessories":options.accessories.data[options.accessories.selected].label;
@@ -536,6 +552,7 @@ popup = await displayPopup({
     ${(options.engrave.selected != "default" && options.engrave.selected != null && options.engrave.message != "")?`
     <ul>
 <li>Type: ${e}</li>
+<li>Color: ${options.engrave.colors}</li>
 <li>Text: ${msg}</li>
 </ul>`:''}</li>
 <li>Total Price: ${price}</li></ul><br/>
@@ -557,7 +574,10 @@ $(".engraving-accordion-item-apply").on("click",function(){
         if(!$("#accept").is(":checked") &&  ($(".message input").val() != "" || $(".monogram input").val() != "")){
             $(".radio-message").css("color","red");
             return;
+        }else{
+            $(".radio-message").css("color","black");
         }
+
     }
     $(".radio-message").css("color","black");
 
